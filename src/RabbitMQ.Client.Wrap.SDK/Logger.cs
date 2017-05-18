@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using RabbitMQ.Client.Wrap.Interface;
 
-namespace RabbitMQ.Client.Wrap.Impl
+namespace RabbitMQ.Client.Wrap
 {
     /// <summary>
     /// 日志记录器
@@ -32,7 +32,7 @@ namespace RabbitMQ.Client.Wrap.Impl
 
         public static void Error(string message, Exception exception = null, params object[] args)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
 
         public static void Fatal(string message, Exception exception = null, params object[] args)
@@ -52,7 +52,6 @@ namespace RabbitMQ.Client.Wrap.Impl
 
         public static void Console(string message, Exception exception = null)
         {
-            System.Console.WriteLine("================================================================================");
             System.Console.WriteLine(message);
             System.Console.WriteLine(exception);
             System.Console.WriteLine("================================================================================");

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace RabbitMQ.Client.Wrap.Interface
 {
@@ -12,13 +13,13 @@ namespace RabbitMQ.Client.Wrap.Interface
         /// </summary>
         /// <param name="routingKey"></param>
         /// <param name="message"></param>
-        void Publish(string routingKey, string message);
+        Task Publish(string routingKey, string message);
         /// <summary>
         /// 
         /// </summary>
         /// <param name="exchange"></param>
         /// <param name="routingKey"></param>
         /// <param name="message"></param>
-        void Publish(string exchange, string routingKey, string message);
+        Task Publish(string exchange, string routingKey, string message);
     }
 }

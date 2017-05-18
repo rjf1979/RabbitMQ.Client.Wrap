@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using RabbitMQ.Client.Wrap.Config;
 using RabbitMQ.Client.Wrap.Interface;
 
 namespace RabbitMQ.Client.Wrap.Impl
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="message"></param>
-    /// <param name="exception"></param>
-    public delegate void ExceptionHandler(string message, Exception exception);
+    ///// <summary>
+    ///// 
+    ///// </summary>
+    ///// <param name="message"></param>
+    ///// <param name="exception"></param>
+    //public delegate void ExceptionHandler(string message, Exception exception);
 
     /// <summary>
     /// 
     /// </summary>
-    public abstract class Queue:IQueue
+    internal abstract class Queue:IQueue
     {
         /// <summary>
         /// 
@@ -34,68 +33,64 @@ namespace RabbitMQ.Client.Wrap.Impl
         /// </summary>
         protected IBasicProperties BasicProperties;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        protected ExceptionHandler ExceptionHandler;
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        //protected ExceptionHandler ExceptionHandler;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="authorization"></param>
-        /// <param name="exceptionHandler"></param>
-        protected Queue(Authorization authorization, ExceptionHandler exceptionHandler)
+        protected Queue(Authorization authorization)
         {
-            ExceptionHandler = exceptionHandler;
             ConnectionFactory = new ConnectionFactory
             {
                 UserName = authorization.UserName,
                 Password = authorization.Password,
                 VirtualHost = authorization.VHost,
-                HostName = authorization.HostName,
+                HostName = authorization.Host,
                 Port = authorization.Port
             };
-            Init(true);
+            Init();
         }
 
-        protected void Init(bool ishand)
+        protected void Init()
         {
             Connection = ConnectionFactory.CreateConnection();
             Channel = Connection.CreateModel();
             Connection.CallbackException += Connection_CallbackException;
             Channel.CallbackException += Channel_CallbackException;
-            var handOrAuto = ishand ? " Hand " : " Auto ";
-            Logger.Info($"Connection is {handOrAuto} Created, Time:{DateTime.Now}");
         }
 
-        void ReConnection()
-        {
-            Init(false);
-        }
+        //void ReConnection()
+        //{
+        //    Init(false);
+        //}
 
-        protected void CheckChannel()
-        {
-            if (Channel.IsClosed || !Connection.IsOpen)
-            {
-                ReConnection();
-            }
-            if (Channel.IsClosed || !Connection.IsOpen)
-            {
-                throw new Exception($"Channel or Connection is Closed! Time:{DateTime.Now}");
-            }
-        }
+        //protected void CheckChannel()
+        //{
+        //    if (Channel.IsClosed || !Connection.IsOpen)
+        //    {
+        //        ReConnection();
+        //    }
+        //    if (Channel.IsClosed || !Connection.IsOpen)
+        //    {
+        //        throw new Exception($"Channel or Connection is Closed! Time:{DateTime.Now}");
+        //    }
+        //}
 
         #region -- Event
         private void Channel_CallbackException(object sender, Events.CallbackExceptionEventArgs e)
         {
             Logger.Error($"Channel is CallbackException,Time:{DateTime.Now}", e.Exception);
-            ExceptionHandler?.Invoke("Channel Callback is exception", e.Exception);
+            //ExceptionHandler?.Invoke("Channel Callback is exception", e.Exception);
         }
 
         private void Connection_CallbackException(object sender, Events.CallbackExceptionEventArgs e)
         {
             Logger.Error($"Connection is CallbackException,Time:{DateTime.Now}", e.Exception);
-            ExceptionHandler?.Invoke("Connection Callback is exception", e.Exception);
+            //ExceptionHandler?.Invoke("Connection Callback is exception", e.Exception);
         }
         #endregion
 
@@ -106,7 +101,7 @@ namespace RabbitMQ.Client.Wrap.Impl
         /// <param name="arguments"></param>
         public void QueueDeclare(string queue, IDictionary<string, object> arguments = null)
         {
-            CheckChannel();
+            //CheckChannel();
             Channel.QueueDeclare(queue, true, false, false, arguments);
         }
 
@@ -118,7 +113,7 @@ namespace RabbitMQ.Client.Wrap.Impl
         /// <param name="routingKey"></param>
         public void QueueBind(string exchange, string queue, string routingKey)
         {
-            CheckChannel();
+            //CheckChannel();
             Channel.QueueBind(queue, exchange, routingKey);
         }
 
@@ -130,7 +125,7 @@ namespace RabbitMQ.Client.Wrap.Impl
         /// <param name="arguments"></param>
         public void ExchangeDeclare(string exchange, ExchangeType exchangeType, IDictionary<string, object> arguments = null)
         {
-            CheckChannel();
+            //CheckChannel();
             Channel.ExchangeDeclare(exchange, exchangeType.ToString().ToLower(), true, false, arguments);
         }
     }

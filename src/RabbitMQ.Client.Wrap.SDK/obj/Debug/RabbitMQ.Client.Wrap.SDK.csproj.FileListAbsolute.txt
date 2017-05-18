@@ -7,3 +7,4 @@ C:\MyDevelop\rabbitmq-client-wrap\src\RabbitMQ.Client.Wrap.SDK\bin\Debug\RabbitM
 C:\MyDevelop\rabbitmq-client-wrap\src\RabbitMQ.Client.Wrap.SDK\bin\Debug\RabbitMQ.Client.Wrap.pdb
 C:\MyDevelop\rabbitmq-client-wrap\src\RabbitMQ.Client.Wrap.SDK\obj\Debug\RabbitMQ.Client.Wrap.dll
 C:\MyDevelop\rabbitmq-client-wrap\src\RabbitMQ.Client.Wrap.SDK\obj\Debug\RabbitMQ.Client.Wrap.pdb
+C:\MyDevelop\rabbitmq-client-wrap\src\RabbitMQ.Client.Wrap.SDK\obj\Debug\RabbitMQ.Client.Wrap.SDK.csprojResolveAssemblyReference.cache
