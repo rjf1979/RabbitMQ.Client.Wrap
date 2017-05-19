@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace RabbitMQ.Client.Wrap.Interface
 {
@@ -27,5 +28,7 @@ namespace RabbitMQ.Client.Wrap.Interface
         /// <param name="exchangeType"></param>
         /// <param name="arguments"></param>
         void ExchangeDeclare(string exchange, ExchangeType exchangeType, IDictionary<string, object> arguments = null);
+
+        void RegisterExceptionHandler(Action<string, Exception> exceptionAction);
     }
 }

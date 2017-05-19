@@ -9,7 +9,6 @@ namespace RabbitMQ.Client.Wrap.Impl
 {
     internal class Subscriber : Queue, ISubscriber
     {
-        //readonly ISubscribeEvent _subscribeEvent;
         readonly IDictionary<string, Func<string, bool>> _callBackEvents = new Dictionary<string, Func<string, bool>>();
         private readonly bool _isNeedNack;
         private readonly bool _noAck;
@@ -77,6 +76,7 @@ namespace RabbitMQ.Client.Wrap.Impl
             {
                 var msg = $"Subscribe is exception，Queue：{queue}";
                 Logger.Error(msg, exp);
+                ExceptionHandler?.Invoke(msg, exp);
                 throw;
             }
         }
