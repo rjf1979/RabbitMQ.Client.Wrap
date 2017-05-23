@@ -23,8 +23,6 @@ namespace RabbitMQ.Client.Wrap.ConsoleApplication
                 });
             }
 
-
-
             //Stopwatch stopwatch = Stopwatch.StartNew();
             //Console.WriteLine("start... > " + DateTime.Now);
             //IList<Task> tasks = new List<Task>();
