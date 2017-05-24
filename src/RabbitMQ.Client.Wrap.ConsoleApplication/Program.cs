@@ -8,8 +8,8 @@ namespace RabbitMQ.Client.Wrap.ConsoleApplication
     {
         static void Main(string[] args)
         {
-            string queue1 = "test-1";
-            var mqClient = Client.Build("admin", "123456", "LogHost", "192.168.117.158");
+            string queue1 = "queue-demo";
+            var mqClient = Client.Build("admin", "123456", "vHost", "192.168.xxx.xxx");
             Task.Run(async () =>
             {
                 mqClient.Publisher.QueueDeclare(queue1);
