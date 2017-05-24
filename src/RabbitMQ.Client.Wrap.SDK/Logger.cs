@@ -22,32 +22,50 @@ namespace RabbitMQ.Client.Wrap
 
         public static void Info(string message, Exception exception = null, params object[] args)
         {
-            throw new NotImplementedException();
+            foreach (var logger in _loggers)
+            {
+                logger.Info(message, exception, args);
+            }
         }
 
         public static void Warn(string message, Exception exception = null, params object[] args)
         {
-            throw new NotImplementedException();
+            foreach (var logger in _loggers)
+            {
+                logger.Warn(message, exception, args);
+            }
         }
 
         public static void Error(string message, Exception exception = null, params object[] args)
         {
-            //throw new NotImplementedException();
+            foreach (var logger in _loggers)
+            {
+                logger.Error(message, exception, args);
+            }
         }
 
         public static void Fatal(string message, Exception exception = null, params object[] args)
         {
-            throw new NotImplementedException();
+            foreach (var logger in _loggers)
+            {
+                logger.Fatal(message, exception, args);
+            }
         }
 
         public static void Debug(string message, Exception exception = null, params object[] args)
         {
-            throw new NotImplementedException();
+            foreach (var logger in _loggers)
+            {
+                logger.Debug(message, exception, args);
+            }
         }
 
         public static void Trace(string message, Exception exception = null, params object[] args)
         {
-            throw new NotImplementedException();
+            foreach (var logger in _loggers)
+            {
+                logger.Trace(message, exception, args);
+            }
         }
 
         public static void Console(string message, Exception exception = null)
