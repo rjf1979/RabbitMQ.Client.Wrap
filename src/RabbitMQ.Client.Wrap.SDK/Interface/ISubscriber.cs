@@ -12,8 +12,8 @@ namespace RabbitMQ.Client.Wrap.Interface
         /// 
         /// </summary>
         /// <returns></returns>
-        string Subscribe(string queue);
+        string Subscribe(string queue, Func<string, bool> callBackEvent);
 
-        void RegisterSubscribe(string queue, Func<string, bool> callBack);
+        //void RegisterSubscribe(string queue, Func<string, bool> callBack);
     }
 }

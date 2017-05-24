@@ -9,7 +9,6 @@ namespace RabbitMQ.Client.Wrap.Impl
 {
     internal class Subscriber : Queue, ISubscriber
     {
-        readonly IDictionary<string, Func<string, bool>> _callBackEvents = new Dictionary<string, Func<string, bool>>();
         private readonly bool _isNeedNack;
         private readonly bool _noAck;
 
@@ -29,8 +28,9 @@ namespace RabbitMQ.Client.Wrap.Impl
         /// 订阅事件
         /// </summary>
         /// <param name="queue"></param>
+        /// <param name="callBackEvent"></param>
         /// <returns></returns>
-        public string Subscribe(string queue)
+        public string Subscribe(string queue, Func<string, bool> callBackEvent)
         {
             try
             {
@@ -44,33 +44,35 @@ namespace RabbitMQ.Client.Wrap.Impl
                         var value = Encoding.UTF8.GetString(body);
                         lock (this)
                         {
-                            Func<string, bool> callBackEvent;
-                            if (_callBackEvents.TryGetValue(queue, out callBackEvent))
+                            var result = callBackEvent?.Invoke(value);
+                            if (result != null && result.Value)
                             {
-                                var result = callBackEvent(value);
-                                if (result)
-                                {
-                                    Channel.BasicAck(ea.DeliveryTag, false);
-                                }
-                                else
-                                {
-                                    if (_isNeedNack) Channel.BasicNack(ea.DeliveryTag, false, true);
-                                }
+                                if(Channel.IsOpen) Channel.BasicAck(ea.DeliveryTag, false);
                             }
                             else
                             {
-                                var msg = "Subscribe callback is not exist!";
-                                Logger.Error(msg);
-                                throw new Exception(msg);
+                                if (_isNeedNack)
+                                {
+                                    if (Channel.IsOpen)
+                                        Channel.BasicNack(ea.DeliveryTag, false, true);
+                                }
                             }
                         }
                     });
                 };
-                var consumerTag = Channel.BasicConsume(queue, _noAck, consumer);
+                if (Channel != null)
+                {
+                    var consumerTag = Channel.BasicConsume(queue, _noAck, consumer);
 #if DEBUG
-                Console.WriteLine($"consumer > " + consumerTag);
+                    Console.WriteLine($"consumer > " + consumerTag);
 #endif
-                return consumerTag;
+                    return consumerTag;
+                }
+                var msg = $"Channel is null，Queue：{queue}";
+                var exp = new Exception(msg);
+                Logger.Error(msg, exp);
+                ExceptionHandler?.Invoke(msg, exp);
+                throw exp;
             }
             catch (Exception exp)
             {
@@ -81,13 +83,13 @@ namespace RabbitMQ.Client.Wrap.Impl
             }
         }
 
-        public void RegisterSubscribe(string queue, Func<string, bool> callBack)
-        {
-            lock (this)
-            {
-                if (!_callBackEvents.ContainsKey(queue)) _callBackEvents.Add(queue, callBack);
-            }
-        }
+        //public void RegisterSubscribe(string queue, Func<string, bool> callBack)
+        //{
+        //    lock (this)
+        //    {
+        //        if (!_callBackEvents.ContainsKey(queue)) _callBackEvents.Add(queue, callBack);
+        //    }
+        //}
 
         public void Dispose()
         {

@@ -32,14 +32,23 @@ namespace RabbitMQ.Client.Wrap.Impl
             //    var mapMessageBuilder = new MapMessageBuilder(Channel);
             //    BasicProperties = (IBasicProperties)mapMessageBuilder.GetContentHeader();
             //}
+
             await Task.Run(() =>
             {
+
                 lock (this)
                 {
                     var body = Encoding.UTF8.GetBytes(message);
                     try
                     {
-                        Channel.BasicPublish(exchange, routingKey, BasicProperties, body);
+                        if (Channel.IsOpen)
+                        {
+                            Channel.BasicPublish(exchange, routingKey, BasicProperties, body);
+                        }
+                        else
+                        {
+                            ExceptionHandler?.Invoke("Channel is Not Opened", null);
+                        }
 #if DEBUG
                         //Logger.Console($"Enter Queue：{routingKey}，Message：{message} > {DateTime.Now}");
 #endif

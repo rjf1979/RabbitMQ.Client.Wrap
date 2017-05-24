@@ -13,32 +13,29 @@ namespace RabbitMQ.Client.Wrap.ConsoleApplication
         static void Main(string[] args)
         {
 
-            for (int i = 0; i < 100; i++)
-            {
-                Task.Run(() =>
-                {
-                    int n = i;
-                    var task = Download(n);
-                    Console.WriteLine($"TaskID：{i}  Downloaded Length：{task.Result} > " + DateTime.Now);
-                });
-            }
 
-            //Stopwatch stopwatch = Stopwatch.StartNew();
-            //Console.WriteLine("start... > " + DateTime.Now);
-            //IList<Task> tasks = new List<Task>();
-            //string queue1 = "test-1";
-            //var mqClient = Client.Build("admin", "123456", "LogHost", "192.168.117.158");
-            //mqClient.Publisher.QueueDeclare(queue1);
-            //for (int i = 0; i < 10000; i++)
-            //{
-            //    var task = mqClient.Publisher.Publish(queue1, "test_" + i);
-            //    task.Wait();
-            //    //tasks.Add(task);
-            //    //task.Start();
-            //}
-            ////Task.WaitAll(tasks.ToArray());
-            //stopwatch.Stop();
-            //Console.WriteLine("over... > " + stopwatch.ElapsedMilliseconds);
+            string queue1 = "test-1";
+            var mqClient = Client.Build("admin", "123456", "LogHost", "192.168.117.158");
+            //mqClient.Subscriber.QueueDeclare(queue1);
+
+            Task.Run(async () =>
+            {
+                while (true)
+                {
+                    await mqClient.Publisher.Publish(queue1, "test-" + DateTime.Now);
+                }
+            });
+
+            Task.Run(() =>
+            {
+                var tag = mqClient.Subscriber.Subscribe(queue1, message =>
+                {
+                    Console.WriteLine($"Recevice Data > {message}，Time > {DateTime.Now}");
+                    return true;
+                });
+                Console.WriteLine($"Subscribe Tag > {tag} ， Time > {DateTime.Now}");
+            });
+
             Console.ReadKey();
         }
 

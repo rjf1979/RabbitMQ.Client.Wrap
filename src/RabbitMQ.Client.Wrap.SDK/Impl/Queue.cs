@@ -48,10 +48,22 @@ namespace RabbitMQ.Client.Wrap.Impl
 
         protected void Init()
         {
-            Connection = ConnectionFactory.CreateConnection();
-            Channel = Connection.CreateModel();
-            Connection.CallbackException += Connection_CallbackException;
-            Channel.CallbackException += Channel_CallbackException;
+            try
+            {
+                Connection = ConnectionFactory.CreateConnection();
+                Channel = Connection.CreateModel();
+                Connection.CallbackException += Connection_CallbackException;
+                Channel.CallbackException += Channel_CallbackException;
+            }
+            catch (Exception exception)
+            {
+#if DEBUG
+                Console.WriteLine(exception);
+#endif
+                ExceptionHandler?.Invoke("RabbitMQ Service Connection is exception", exception);
+                throw;
+            }
+            
         }
 
         #region -- Event
