@@ -63,7 +63,7 @@ namespace RabbitMQ.Client.Wrap.Impl
                 ExceptionHandler?.Invoke("RabbitMQ Service Connection is exception", exception);
                 throw;
             }
-            
+
         }
 
         #region -- Event
@@ -115,7 +115,7 @@ namespace RabbitMQ.Client.Wrap.Impl
 
         public void RegisterExceptionHandler(Action<string, Exception> exceptionHandler)
         {
-            ExceptionHandler = exceptionHandler;
+            if (ExceptionHandler == null) ExceptionHandler = exceptionHandler;
         }
     }
 }

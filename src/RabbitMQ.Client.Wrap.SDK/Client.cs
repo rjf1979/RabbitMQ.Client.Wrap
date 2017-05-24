@@ -10,7 +10,6 @@ namespace RabbitMQ.Client.Wrap
 {
     public class Client
     {
-        //private static readonly Client _client;
         private readonly Authorization _authorization;
 
         private Client(string userName, string password, string vhost, string host, int port = 5672)
@@ -41,6 +40,16 @@ namespace RabbitMQ.Client.Wrap
                     return _subscriber ?? (_subscriber = new Subscriber(_authorization));
                 }
             }
+        }
+
+        /// <summary>
+        /// 注册一个异常处理
+        /// </summary>
+        /// <param name="exceptionHandler"></param>
+        public void RegisterExceptionHandler(Action<string, Exception> exceptionHandler)
+        {
+            _publisher?.RegisterExceptionHandler(exceptionHandler);
+            _subscriber?.RegisterExceptionHandler(exceptionHandler);
         }
 
         /// <summary>

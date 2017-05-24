@@ -20,7 +20,7 @@ namespace RabbitMQ.Client.Wrap
             _loggers.Add(log);
         }
 
-        public static void Info(string message, Exception exception = null, params object[] args)
+        internal static void Info(string message, Exception exception = null, params object[] args)
         {
             foreach (var logger in _loggers)
             {
@@ -28,7 +28,7 @@ namespace RabbitMQ.Client.Wrap
             }
         }
 
-        public static void Warn(string message, Exception exception = null, params object[] args)
+        internal static void Warn(string message, Exception exception = null, params object[] args)
         {
             foreach (var logger in _loggers)
             {
@@ -36,7 +36,7 @@ namespace RabbitMQ.Client.Wrap
             }
         }
 
-        public static void Error(string message, Exception exception = null, params object[] args)
+        internal static void Error(string message, Exception exception = null, params object[] args)
         {
             foreach (var logger in _loggers)
             {
@@ -44,7 +44,7 @@ namespace RabbitMQ.Client.Wrap
             }
         }
 
-        public static void Fatal(string message, Exception exception = null, params object[] args)
+        internal static void Fatal(string message, Exception exception = null, params object[] args)
         {
             foreach (var logger in _loggers)
             {
@@ -52,7 +52,7 @@ namespace RabbitMQ.Client.Wrap
             }
         }
 
-        public static void Debug(string message, Exception exception = null, params object[] args)
+        internal static void Debug(string message, Exception exception = null, params object[] args)
         {
             foreach (var logger in _loggers)
             {
@@ -60,19 +60,12 @@ namespace RabbitMQ.Client.Wrap
             }
         }
 
-        public static void Trace(string message, Exception exception = null, params object[] args)
+        internal static void Trace(string message, Exception exception = null, params object[] args)
         {
             foreach (var logger in _loggers)
             {
                 logger.Trace(message, exception, args);
             }
-        }
-
-        public static void Console(string message, Exception exception = null)
-        {
-            System.Console.WriteLine(message);
-            System.Console.WriteLine(exception);
-            System.Console.WriteLine("================================================================================");
         }
     }
 }
