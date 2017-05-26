@@ -47,15 +47,14 @@ namespace RabbitMQ.Client.Wrap.Impl
                         }
                         else
                         {
-                            ExceptionHandler?.Invoke("Channel is Not Opened", null);
+                            var msg= "Channel is Not Opened";
+                            EnterLogEvent(LogLevel.Error, msg);
                         }
-#if DEBUG
-                        //Logger.Console($"Enter Queue：{routingKey}，Message：{message} > {DateTime.Now}");
-#endif
                     }
                     catch (Exception exception)
                     {
-                        Logger.Error($"Channel BasicPublish Failed,Time:{DateTime.Now}", exception);
+                        var msg = $"exchange：{exchange}，routingKey：{routingKey} > BasicPublish Failed,Time:{DateTime.Now}";
+                        EnterLogEvent(LogLevel.Error, msg,exception, message);
                     }
                 }
             });

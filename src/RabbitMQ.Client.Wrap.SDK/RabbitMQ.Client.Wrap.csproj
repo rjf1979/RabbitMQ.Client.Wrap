@@ -56,6 +56,7 @@
     <Compile Include="Interface\ISubscribeEvent.cs" />
     <Compile Include="Interface\ISubscriber.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="LogLevel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Impl\Publisher.cs" />
     <Compile Include="Impl\Queue.cs" />

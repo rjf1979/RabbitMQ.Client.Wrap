@@ -8,53 +8,32 @@ namespace RabbitMQ.Client.Wrap.ConsoleApplication
     {
         static void Main(string[] args)
         {
-            string queue1 = "queue-demo";
-            var mqClient = Client.Build("admin", "123456", "LogHost", "192.168.117.158");
-            mqClient.Publisher.QueueDeclare(queue1);
-                var tag = mqClient.Subscriber.Subscribe(queue1, message =>
-                {
-                    Console.WriteLine($"Recevice Data > {message}，Time > {DateTime.Now}");
-                    return true;
-                });
-                Console.WriteLine($"Subscribe Tag > {tag} ， Time > {DateTime.Now}");
-  
+            //添加一个日志记录操作对象类
+            Logger.RegisiterLogger(new MyLogger());
+            string queueName = "queue-demo";
+            var client = Client.Build("admin", "123456", "LogHost", "192.168.117.158");
+            Task.Run(async () => { await Publish(client, queueName); });
+            Subscribe(client, queueName);
             Console.ReadKey();
         }
 
-        static async void Publish()
+        static async Task Publish(Client client, string queue)
         {
-            //添加一个日志记录操作对象类
-            Logger.AddLogger(new MyLogger());
-            //然后就可以直接进行
-
-
-            string queueName = "queue-demo";
-            var mqClient = Client.Build("admin", "123456", "LogHost", "192.168.117.158");
-
-
-            mqClient.Subscriber.RegisterExceptionHandler((message, exception) =>
+            client.Publisher.QueueDeclare(queue);
+            while (true)
             {
-                //处理消息
+                string messageData = "test-" + DateTime.Now;
+                await client.Publisher.Publish(queue, messageData);
+            }
+        }
 
-
-                //处理异常
-
-
-            });
-
-
-
-
-            mqClient.Publisher.QueueDeclare(queueName);
-            string messageData = "test-" + DateTime.Now;
-            await mqClient.Publisher.Publish(queueName, messageData);
-
-            var tag = mqClient.Subscriber.Subscribe(queueName, message =>
+        static void Subscribe(Client client, string queue)
+        {
+            var tag = client.Subscriber.Subscribe(queue, message =>
             {
                 Console.WriteLine($"Recevice Data > {message}，Time > {DateTime.Now}");
                 return true;
             });
-            Console.WriteLine($"Subscriber Tag > {tag} ， Time > {DateTime.Now}");
         }
     }
 }

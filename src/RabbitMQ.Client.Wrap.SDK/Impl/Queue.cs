@@ -46,6 +46,32 @@ namespace RabbitMQ.Client.Wrap.Impl
 
         protected Action<string, Exception> ExceptionHandler;
 
+        protected void EnterLogEvent(LogLevel logLevel, string message, Exception exception = null, params object[] args)
+        {
+            if (exception != null) ExceptionHandler?.Invoke(message, exception);
+#if DEBUG
+            Logger.Debug(message, exception, args);
+#endif
+#if TRACE
+            Logger.Trace(message, exception, args);
+#endif
+            switch (logLevel)
+            {
+                case LogLevel.Info:
+                    Logger.Info(message, exception, args);
+                    break;
+                case LogLevel.Warn:
+                    Logger.Warn(message, exception, args);
+                    break;
+                case LogLevel.Error:
+                    Logger.Error(message, exception, args);
+                    break;
+                case LogLevel.Fatal:
+                    Logger.Fatal(message, exception, args);
+                    break;
+            }
+        }
+
         protected void Init()
         {
             try
@@ -57,10 +83,8 @@ namespace RabbitMQ.Client.Wrap.Impl
             }
             catch (Exception exception)
             {
-#if DEBUG
-                Console.WriteLine(exception);
-#endif
-                ExceptionHandler?.Invoke("RabbitMQ Service Connection is exception", exception);
+                var msg = "RabbitMQ Service Connection is exception";
+                EnterLogEvent(LogLevel.Error, msg, exception);
                 throw;
             }
 
@@ -69,14 +93,14 @@ namespace RabbitMQ.Client.Wrap.Impl
         #region -- Event
         private void Channel_CallbackException(object sender, Events.CallbackExceptionEventArgs e)
         {
-            Logger.Error($"Channel is CallbackException,Time:{DateTime.Now}", e.Exception);
-            ExceptionHandler?.Invoke("Channel Callback is exception", e.Exception);
+            var msg = $"Channel is CallbackException,Time:{DateTime.Now}";
+            EnterLogEvent(LogLevel.Error, msg, e.Exception);
         }
 
         private void Connection_CallbackException(object sender, Events.CallbackExceptionEventArgs e)
         {
-            Logger.Error($"Connection is CallbackException,Time:{DateTime.Now}", e.Exception);
-            ExceptionHandler?.Invoke("Connection Callback is exception", e.Exception);
+            var msg = $"Connection is CallbackException,Time:{DateTime.Now}";
+            EnterLogEvent(LogLevel.Error, msg, e.Exception);
         }
         #endregion
 
@@ -85,9 +109,19 @@ namespace RabbitMQ.Client.Wrap.Impl
         /// </summary>
         /// <param name="queue"></param>
         /// <param name="arguments"></param>
-        public void QueueDeclare(string queue, IDictionary<string, object> arguments = null)
+        public bool QueueDeclare(string queue, IDictionary<string, object> arguments = null)
         {
-            Channel.QueueDeclare(queue, true, false, false, arguments);
+            try
+            {
+                var result = Channel.QueueDeclare(queue, true, false, false, arguments);
+                return !string.IsNullOrEmpty(result.QueueName);
+            }
+            catch (Exception e)
+            {
+                var msg = $"QueueDeclare {queue} is exception {DateTime.Now}";
+                EnterLogEvent(LogLevel.Error, msg, e);
+            }
+            return false;
         }
 
         /// <summary>
@@ -98,7 +132,17 @@ namespace RabbitMQ.Client.Wrap.Impl
         /// <param name="routingKey"></param>
         public void QueueBind(string exchange, string queue, string routingKey)
         {
-            Channel.QueueBind(queue, exchange, routingKey);
+            try
+            {
+                Channel.QueueBind(queue, exchange, routingKey);
+            }
+            catch (Exception e)
+            {
+                var msg = $"QueueBind exchange:{exchange} > queue:{queue} is exception {DateTime.Now}";
+                EnterLogEvent(LogLevel.Error, msg, e);
+                throw;
+            }
+
         }
 
         /// <summary>
@@ -109,7 +153,17 @@ namespace RabbitMQ.Client.Wrap.Impl
         /// <param name="arguments"></param>
         public void ExchangeDeclare(string exchange, ExchangeType exchangeType, IDictionary<string, object> arguments = null)
         {
-            Channel.ExchangeDeclare(exchange, exchangeType.ToString().ToLower(), true, false, arguments);
+            try
+            {
+                Channel.ExchangeDeclare(exchange, exchangeType.ToString().ToLower(), true, false, arguments);
+            }
+            catch (Exception e)
+            {
+                var msg = $"ExchangeDeclare exchange:{exchange} is exception {DateTime.Now}";
+                EnterLogEvent(LogLevel.Error, msg, e);
+                throw;
+            }
+
         }
 
 

@@ -38,7 +38,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="RabbitMQ.Client.Wrap, Version=0.0.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\RabbitMQ.Client.Wrap.0.0.1\lib\net452\RabbitMQ.Client.Wrap.dll</HintPath>
+      <HintPath>..\..\packages\RabbitMQ.Client.Wrap.0.0.2\lib\net452\RabbitMQ.Client.Wrap.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

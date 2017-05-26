@@ -12,10 +12,10 @@ namespace RabbitMQ.Client.Wrap
         private static readonly IList<ILog> _loggers = new List<ILog>();
 
         /// <summary>
-        /// 添加一个日志记录器
+        /// 注册一个日志记录器
         /// </summary>
         /// <param name="log"></param>
-        public static void AddLogger(ILog log)
+        public static void RegisiterLogger(ILog log)
         {
             _loggers.Add(log);
         }

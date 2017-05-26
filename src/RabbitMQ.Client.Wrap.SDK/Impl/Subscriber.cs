@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using RabbitMQ.Client.Events;
@@ -34,10 +33,17 @@ namespace RabbitMQ.Client.Wrap.Impl
         {
             try
             {
+                if (Channel.IsClosed)
+                {
+                    var message = "queue:{queue} > Channel is not opened";
+                    EnterLogEvent(LogLevel.Error, message);
+                    throw new Exception(message);
+                }
                 var consumer = new EventingBasicConsumer(Channel);
                 //接收事件
-                consumer.Received += async (ch, ea) =>
+                consumer.Received += async (sender, ea) =>
                 {
+                    var localConsumer = (EventingBasicConsumer)sender;
                     await Task.Run(() =>
                     {
                         var body = ea.Body;
@@ -47,14 +53,25 @@ namespace RabbitMQ.Client.Wrap.Impl
                             var result = callBackEvent?.Invoke(value);
                             if (result != null && result.Value)
                             {
-                                if(Channel.IsOpen) Channel.BasicAck(ea.DeliveryTag, false);
+                                if (localConsumer.Model.IsOpen)
+                                    localConsumer.Model.BasicAck(ea.DeliveryTag, false);
+                                else
+                                {
+                                    var message = "queue:{queue} > BasicAck，Channel is not opened";
+                                    EnterLogEvent(LogLevel.Error, message);
+                                }
                             }
                             else
                             {
                                 if (_isNeedNack)
                                 {
-                                    if (Channel.IsOpen)
-                                        Channel.BasicNack(ea.DeliveryTag, false, true);
+                                    if (localConsumer.Model.IsOpen)
+                                        localConsumer.Model.BasicNack(ea.DeliveryTag, false, true);
+                                    else
+                                    {
+                                        var message = "queue:{queue} > BasicNack，Channel is not opened";
+                                        EnterLogEvent(LogLevel.Error, message);
+                                    }
                                 }
                             }
                         }
@@ -63,33 +80,20 @@ namespace RabbitMQ.Client.Wrap.Impl
                 if (Channel != null)
                 {
                     var consumerTag = Channel.BasicConsume(queue, _noAck, consumer);
-#if DEBUG
-                    Console.WriteLine($"consumer > " + consumerTag);
-#endif
                     return consumerTag;
                 }
                 var msg = $"Channel is null，Queue：{queue}";
                 var exp = new Exception(msg);
-                Logger.Error(msg, exp);
-                ExceptionHandler?.Invoke(msg, exp);
+                EnterLogEvent(LogLevel.Error, msg);
                 throw exp;
             }
             catch (Exception exp)
             {
                 var msg = $"Subscribe is exception，Queue：{queue}";
-                Logger.Error(msg, exp);
-                ExceptionHandler?.Invoke(msg, exp);
+                EnterLogEvent(LogLevel.Error, msg, exp);
                 throw;
             }
         }
-
-        //public void RegisterSubscribe(string queue, Func<string, bool> callBack)
-        //{
-        //    lock (this)
-        //    {
-        //        if (!_callBackEvents.ContainsKey(queue)) _callBackEvents.Add(queue, callBack);
-        //    }
-        //}
 
         public void Dispose()
         {

@@ -13,7 +13,7 @@ namespace RabbitMQ.Client.Wrap.Interface
         /// </summary>
         /// <param name="queue"></param>
         /// <param name="arguments"></param>
-        void QueueDeclare(string queue, IDictionary<string, object> arguments = null);
+        bool QueueDeclare(string queue, IDictionary<string, object> arguments = null);
         /// <summary>
         /// 
         /// </summary>
