@@ -26,11 +26,14 @@ namespace RabbitMQ.Client.Wrap.Impl
         /// </summary>
         protected IBasicProperties BasicProperties;
 
+        protected bool IsDurable;
+
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="authorization"></param>
-        protected Queue(Authorization authorization)
+        /// <param name="authorization">rabbitMQ的账号信息</param>
+        /// <param name="isDurable">是否持久化</param>
+        protected Queue(Authorization authorization, bool isDurable = true)
         {
             ConnectionFactory = new ConnectionFactory
             {
@@ -41,7 +44,13 @@ namespace RabbitMQ.Client.Wrap.Impl
                 Port = authorization.Port,
                 AutomaticRecoveryEnabled = true
             };
+            IsDurable = isDurable;
             Init();
+            if (isDurable)
+            {
+                BasicProperties = Channel.CreateBasicProperties();
+                BasicProperties.DeliveryMode = 2;
+            }
         }
 
         protected Action<string, Exception> ExceptionHandler;
@@ -113,7 +122,7 @@ namespace RabbitMQ.Client.Wrap.Impl
         {
             try
             {
-                var result = Channel.QueueDeclare(queue, true, false, false, arguments);
+                var result = Channel.QueueDeclare(queue, IsDurable, false, false, arguments);
                 return !string.IsNullOrEmpty(result.QueueName);
             }
             catch (Exception e)
@@ -155,7 +164,7 @@ namespace RabbitMQ.Client.Wrap.Impl
         {
             try
             {
-                Channel.ExchangeDeclare(exchange, exchangeType.ToString().ToLower(), true, false, arguments);
+                Channel.ExchangeDeclare(exchange, exchangeType.ToString().ToLower(), IsDurable, false, arguments);
             }
             catch (Exception e)
             {

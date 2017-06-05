@@ -13,7 +13,8 @@ namespace RabbitMQ.Client.Wrap.ConsoleApplication
             string queueName = "queue-demo";
             var client = Client.Build("admin", "123456", "LogHost", "192.168.117.158");
             Task.Run(async () => { await Publish(client, queueName); });
-            Subscribe(client, queueName);
+            //Subscribe(client, queueName);
+
             Console.ReadKey();
         }
 

@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using RabbitMQ.Client.Wrap.Impl;
 using RabbitMQ.Client.Wrap.Interface;
 
 namespace RabbitMQ.Client.Wrap
 {
+    /// <summary>
+    /// 客户端
+    /// </summary>
     public class Client
     {
         private readonly Authorization _authorization;
@@ -18,6 +17,9 @@ namespace RabbitMQ.Client.Wrap
         }
 
         private IPublisher _publisher;
+        /// <summary>
+        /// 生产者
+        /// </summary>
         public IPublisher Publisher
         {
             get
@@ -30,7 +32,9 @@ namespace RabbitMQ.Client.Wrap
         }
 
         private ISubscriber _subscriber;
-
+        /// <summary>
+        /// 消费者
+        /// </summary>
         public ISubscriber Subscriber
         {
             get
