@@ -7,17 +7,17 @@ namespace RabbitMQ.Client.Wrap.Impl
 {
     internal class Publisher : Queue, IPublisher
     {
-        internal Publisher(Authorization authorization,string queueName) : base(authorization, queueName)
+        internal Publisher(Authorization authorization) : base(authorization, string.Empty)
         {
 
         }
 
-        public async Task Publish(string routingKey, string message)
+        public void Publish(string routingKey, string message)
         {
-            await Publish(string.Empty, routingKey, message).ConfigureAwait(false);
+            Publish(string.Empty, routingKey, message);
         }
 
-        public async Task Publish(string exchange, string routingKey, string message)
+        public void Publish(string exchange, string routingKey, string message)
         {
             if (string.IsNullOrWhiteSpace(routingKey))
             {
@@ -33,7 +33,7 @@ namespace RabbitMQ.Client.Wrap.Impl
             //    BasicProperties = (IBasicProperties)mapMessageBuilder.GetContentHeader();
             //}
 
-            await Task.Run(() =>
+            Task.Run(() =>
             {
                 lock (this)
                 {
@@ -56,7 +56,7 @@ namespace RabbitMQ.Client.Wrap.Impl
                         EnterLogEvent(LogLevel.Error, msg, exception, message);
                     }
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         public void Dispose()

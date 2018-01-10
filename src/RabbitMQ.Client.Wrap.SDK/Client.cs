@@ -15,21 +15,20 @@ namespace RabbitMQ.Client.Wrap
         {
             _authorization = new Authorization(userName, password, vhost, host, port);
         }
-
-        //private IPublisher _publisher;
-        ///// <summary>
-        ///// 生产者
-        ///// </summary>
-        //public IPublisher Publisher
-        //{
-        //    get
-        //    {
-        //        lock (this)
-        //        {
-        //            return _publisher ?? (_publisher = new Publisher(_authorization));
-        //        }
-        //    }
-        //}
+        private IPublisher _publisher;
+        /// <summary>
+        /// 生产者
+        /// </summary>
+        public IPublisher Publisher
+        {
+            get
+            {
+                lock (this)
+                {
+                    return _publisher ?? (_publisher = new Publisher(_authorization));
+                }
+            }
+        }
         //private ISubscriber _subscriber;
         ///// <summary>
         ///// 消费者
@@ -44,10 +43,15 @@ namespace RabbitMQ.Client.Wrap
         //        }
         //    }
         //}
-        public IPublisher CreatePublisher(string queueName)
-        {
-            return new Publisher(_authorization, queueName);
-        }
+        //public IPublisher CreatePublisher(string queueName)
+        //{
+        //    return new Publisher(_authorization, queueName);
+        //}
+        /// <summary>
+        /// 创建消费者
+        /// </summary>
+        /// <param name="queueName"></param>
+        /// <returns></returns>
         public ISubscriber CreateSubscriber(string queueName)
         {
             return new Subscriber(_authorization, queueName);
