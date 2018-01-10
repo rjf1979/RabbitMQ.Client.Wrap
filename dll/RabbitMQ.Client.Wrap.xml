@@ -1,0 +1,289 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RabbitMQ.Client.Wrap</name>
+    </assembly>
+    <members>
+        <member name="T:RabbitMQ.Client.Wrap.Client">
+            <summary>
+            客户端
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.Client.Wrap.Client.Publisher">
+            <summary>
+            生产者
+            </summary>
+        </member>
+        <member name="M:RabbitMQ.Client.Wrap.Client.CreateSubscriber(System.String)">
+            <summary>
+            创建消费者
+            </summary>
+            <param name="queueName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:RabbitMQ.Client.Wrap.Client.Build(System.String,System.String,System.String,System.String,System.Int32)">
+            <summary>
+            使用一个队列客户端
+            </summary>
+            <param name="userName"></param>
+            <param name="password"></param>
+            <param name="vhost"></param>
+            <param name="host"></param>
+            <param name="port"></param>
+            <returns></returns>
+        </member>
+        <member name="T:RabbitMQ.Client.Wrap.Authorization">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:RabbitMQ.Client.Wrap.Authorization.#ctor(System.String,System.String,System.String,System.String,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="userName"></param>
+            <param name="password"></param>
+            <param name="vhost"></param>
+            <param name="host"></param>
+            <param name="port"></param>
+        </member>
+        <member name="P:RabbitMQ.Client.Wrap.Authorization.UserName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.Client.Wrap.Authorization.Password">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.Client.Wrap.Authorization.VHost">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.Client.Wrap.Authorization.Host">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.Client.Wrap.Authorization.Port">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:RabbitMQ.Client.Wrap.ExchangeType">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:RabbitMQ.Client.Wrap.ExchangeType.Direct">
+            <summary>
+            引导模式
+            </summary>
+        </member>
+        <member name="F:RabbitMQ.Client.Wrap.ExchangeType.Fanout">
+            <summary>
+            广播模式
+            </summary>
+        </member>
+        <member name="F:RabbitMQ.Client.Wrap.ExchangeType.Topic">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:RabbitMQ.Client.Wrap.Interface.IPublisher">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:RabbitMQ.Client.Wrap.Interface.IPublisher.Publish(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="routingKey"></param>
+            <param name="message"></param>
+        </member>
+        <member name="M:RabbitMQ.Client.Wrap.Interface.IPublisher.Publish(System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="exchange"></param>
+            <param name="routingKey"></param>
+            <param name="message"></param>
+        </member>
+        <member name="T:RabbitMQ.Client.Wrap.Interface.IQueue">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:RabbitMQ.Client.Wrap.Interface.IQueue.QueueDeclare(System.String,System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            
+            </summary>
+            <param name="queue"></param>
+            <param name="arguments"></param>
+        </member>
+        <member name="M:RabbitMQ.Client.Wrap.Interface.IQueue.QueueBind(System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="exchange"></param>
+            <param name="queue"></param>
+            <param name="routingKey"></param>
+        </member>
+        <member name="M:RabbitMQ.Client.Wrap.Interface.IQueue.ExchangeDeclare(System.String,RabbitMQ.Client.Wrap.ExchangeType,System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            
+            </summary>
+            <param name="exchange"></param>
+            <param name="exchangeType"></param>
+            <param name="arguments"></param>
+        </member>
+        <member name="P:RabbitMQ.Client.Wrap.Interface.IQueue.QueueName">
+            <summary>
+            消息队列名称
+            </summary>
+        </member>
+        <member name="M:RabbitMQ.Client.Wrap.Interface.IQueue.RegisterExceptionHandler(System.Action{System.String,System.Exception})">
+            <summary>
+            注册记录异常日志
+            </summary>
+            <param name="exceptionAction"></param>
+        </member>
+        <member name="T:RabbitMQ.Client.Wrap.Interface.ISubscribeEvent">
+            <summary>
+            订阅事件
+            </summary>
+        </member>
+        <member name="M:RabbitMQ.Client.Wrap.Interface.ISubscribeEvent.Call(System.String)">
+            <summary>
+            回调方法
+            </summary>
+            <param name="receiveMessage"></param>
+            <returns></returns>
+        </member>
+        <member name="T:RabbitMQ.Client.Wrap.Interface.ISubscriber">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:RabbitMQ.Client.Wrap.Interface.ISubscriber.Subscribe(System.Func{System.String,System.Boolean})">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:RabbitMQ.Client.Wrap.Logger">
+            <summary>
+            日志记录器
+            </summary>
+        </member>
+        <member name="M:RabbitMQ.Client.Wrap.Logger.RegisiterLogger(RabbitMQ.Client.Wrap.Interface.ILog)">
+            <summary>
+            注册一个日志记录器
+            </summary>
+            <param name="log"></param>
+        </member>
+        <member name="T:RabbitMQ.Client.Wrap.Impl.Queue">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:RabbitMQ.Client.Wrap.Impl.Queue.ConnectionFactory">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:RabbitMQ.Client.Wrap.Impl.Queue.Connection">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:RabbitMQ.Client.Wrap.Impl.Queue.Channel">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:RabbitMQ.Client.Wrap.Impl.Queue.BasicProperties">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:RabbitMQ.Client.Wrap.Impl.Queue.#ctor(RabbitMQ.Client.Wrap.Authorization,System.String,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="authorization">rabbitMQ的账号信息</param>
+            <param name="queueName"></param>
+            <param name="isDurable">是否持久化</param>
+        </member>
+        <member name="M:RabbitMQ.Client.Wrap.Impl.Queue.QueueDeclare(System.String,System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            
+            </summary>
+            <param name="queue"></param>
+            <param name="arguments"></param>
+        </member>
+        <member name="M:RabbitMQ.Client.Wrap.Impl.Queue.QueueBind(System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="exchange"></param>
+            <param name="queue"></param>
+            <param name="routingKey"></param>
+        </member>
+        <member name="M:RabbitMQ.Client.Wrap.Impl.Queue.ExchangeDeclare(System.String,RabbitMQ.Client.Wrap.ExchangeType,System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            
+            </summary>
+            <param name="exchange"></param>
+            <param name="exchangeType"></param>
+            <param name="arguments"></param>
+        </member>
+        <member name="M:RabbitMQ.Client.Wrap.Impl.Subscriber.#ctor(RabbitMQ.Client.Wrap.Authorization,System.String,System.Boolean,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="authorization"></param>
+            <param name="queueName"></param>
+            <param name="noAck">是否无需等待回答就默认消费掉消息</param>
+            <param name="isNeedNack">消息是否需要重新丢入队列</param>
+        </member>
+        <member name="M:RabbitMQ.Client.Wrap.Impl.Subscriber.Subscribe(System.Func{System.String,System.Boolean})">
+            <summary>
+            订阅事件
+            </summary>
+            <param name="callBackEvent"></param>
+            <returns></returns>
+        </member>
+        <member name="T:RabbitMQ.Client.Wrap.Result">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.Client.Wrap.Result.IsSuccess">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:RabbitMQ.Client.Wrap.Result.FailMessage">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:RabbitMQ.Client.Wrap.Result.Success">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:RabbitMQ.Client.Wrap.Result.Failure(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="failMessage"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
