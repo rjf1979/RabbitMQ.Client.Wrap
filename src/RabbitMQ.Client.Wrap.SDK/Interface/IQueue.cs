@@ -28,7 +28,7 @@ namespace RabbitMQ.Client.Wrap.Interface
         /// <param name="exchangeType"></param>
         /// <param name="arguments"></param>
         void ExchangeDeclare(string exchange, ExchangeType exchangeType, IDictionary<string, object> arguments = null);
-
+        string QueueName { get; }
         void RegisterExceptionHandler(Action<string, Exception> exceptionAction);
     }
 }

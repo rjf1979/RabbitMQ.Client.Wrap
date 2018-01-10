@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 namespace RabbitMQ.Client.Wrap.Interface
 {
@@ -12,8 +11,6 @@ namespace RabbitMQ.Client.Wrap.Interface
         /// 
         /// </summary>
         /// <returns></returns>
-        string Subscribe(string queue, Func<string, bool> callBackEvent);
-
-        //void RegisterSubscribe(string queue, Func<string, bool> callBack);
+        string Subscribe(Func<string, bool> callBackEvent);
     }
 }

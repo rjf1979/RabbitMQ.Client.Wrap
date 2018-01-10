@@ -7,7 +7,7 @@ namespace RabbitMQ.Client.Wrap.Impl
 {
     internal class Publisher : Queue, IPublisher
     {
-        internal Publisher(Authorization authorization) : base(authorization)
+        internal Publisher(Authorization authorization,string queueName) : base(authorization, queueName)
         {
 
         }

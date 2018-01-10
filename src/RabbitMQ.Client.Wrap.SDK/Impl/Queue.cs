@@ -32,8 +32,9 @@ namespace RabbitMQ.Client.Wrap.Impl
         /// 
         /// </summary>
         /// <param name="authorization">rabbitMQ的账号信息</param>
+        /// <param name="queueName"></param>
         /// <param name="isDurable">是否持久化</param>
-        protected Queue(Authorization authorization, bool isDurable = true)
+        protected Queue(Authorization authorization,string queueName, bool isDurable = true)
         {
             ConnectionFactory = new ConnectionFactory
             {
@@ -44,6 +45,7 @@ namespace RabbitMQ.Client.Wrap.Impl
                 Port = authorization.Port,
                 AutomaticRecoveryEnabled = true
             };
+            QueueName = queueName;
             IsDurable = isDurable;
             Init();
             if (isDurable)
@@ -175,6 +177,7 @@ namespace RabbitMQ.Client.Wrap.Impl
 
         }
 
+        public string QueueName { get; }
 
         public void RegisterExceptionHandler(Action<string, Exception> exceptionHandler)
         {

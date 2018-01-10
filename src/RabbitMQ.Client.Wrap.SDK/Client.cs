@@ -16,44 +16,51 @@ namespace RabbitMQ.Client.Wrap
             _authorization = new Authorization(userName, password, vhost, host, port);
         }
 
-        private IPublisher _publisher;
-        /// <summary>
-        /// 生产者
-        /// </summary>
-        public IPublisher Publisher
+        //private IPublisher _publisher;
+        ///// <summary>
+        ///// 生产者
+        ///// </summary>
+        //public IPublisher Publisher
+        //{
+        //    get
+        //    {
+        //        lock (this)
+        //        {
+        //            return _publisher ?? (_publisher = new Publisher(_authorization));
+        //        }
+        //    }
+        //}
+        //private ISubscriber _subscriber;
+        ///// <summary>
+        ///// 消费者
+        ///// </summary>
+        //public ISubscriber Subscriber
+        //{
+        //    get
+        //    {
+        //        lock (this)
+        //        {
+        //            return _subscriber ?? (_subscriber = new Subscriber(_authorization));
+        //        }
+        //    }
+        //}
+        public IPublisher CreatePublisher(string queueName)
         {
-            get
-            {
-                lock (this)
-                {
-                    return _publisher ?? (_publisher = new Publisher(_authorization));
-                }
-            }
+            return new Publisher(_authorization, queueName);
         }
-        private ISubscriber _subscriber;
-        /// <summary>
-        /// 消费者
-        /// </summary>
-        public ISubscriber Subscriber
+        public ISubscriber CreateSubscriber(string queueName)
         {
-            get
-            {
-                lock (this)
-                {
-                    return _subscriber ?? (_subscriber = new Subscriber(_authorization));
-                }
-            }
+            return new Subscriber(_authorization, queueName);
         }
-
-        /// <summary>
-        /// 注册一个异常处理
-        /// </summary>
-        /// <param name="exceptionHandler"></param>
-        public void RegisterExceptionHandler(Action<string, Exception> exceptionHandler)
-        {
-            _publisher?.RegisterExceptionHandler(exceptionHandler);
-            _subscriber?.RegisterExceptionHandler(exceptionHandler);
-        }
+        ///// <summary>
+        ///// 注册一个异常处理
+        ///// </summary>
+        ///// <param name="exceptionHandler"></param>
+        //public void RegisterExceptionHandler(Action<string, Exception> exceptionHandler)
+        //{
+        //    _publisher?.RegisterExceptionHandler(exceptionHandler);
+        //    _subscriber?.RegisterExceptionHandler(exceptionHandler);
+        //}
 
         /// <summary>
         /// 使用一个队列客户端
