@@ -14,7 +14,7 @@ namespace RabbitMQ.Client.Wrap.Impl
 
         public async Task Publish(string routingKey, string message)
         {
-            await Publish(string.Empty, routingKey, message);
+            await Publish(string.Empty, routingKey, message).ConfigureAwait(false);
         }
 
         public async Task Publish(string exchange, string routingKey, string message)
@@ -35,7 +35,6 @@ namespace RabbitMQ.Client.Wrap.Impl
 
             await Task.Run(() =>
             {
-
                 lock (this)
                 {
                     var body = Encoding.UTF8.GetBytes(message);
@@ -47,14 +46,14 @@ namespace RabbitMQ.Client.Wrap.Impl
                         }
                         else
                         {
-                            var msg= "Channel is Not Opened";
+                            var msg = "Channel is Not Opened";
                             EnterLogEvent(LogLevel.Error, msg);
                         }
                     }
                     catch (Exception exception)
                     {
                         var msg = $"exchange：{exchange}，routingKey：{routingKey} > BasicPublish Failed,Time:{DateTime.Now}";
-                        EnterLogEvent(LogLevel.Error, msg,exception, message);
+                        EnterLogEvent(LogLevel.Error, msg, exception, message);
                     }
                 }
             });

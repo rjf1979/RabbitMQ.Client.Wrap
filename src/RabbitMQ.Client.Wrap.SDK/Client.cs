@@ -30,7 +30,6 @@ namespace RabbitMQ.Client.Wrap
                 }
             }
         }
-
         private ISubscriber _subscriber;
         /// <summary>
         /// 消费者

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text;
-using System.Threading.Tasks;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Wrap.Interface;
 
@@ -41,41 +40,38 @@ namespace RabbitMQ.Client.Wrap.Impl
                 }
                 var consumer = new EventingBasicConsumer(Channel);
                 //接收事件
-                consumer.Received += async (sender, ea) =>
+                consumer.Received += (sender, ea) =>
                 {
                     var localConsumer = (EventingBasicConsumer)sender;
-                    await Task.Run(() =>
+                    var body = ea.Body;
+                    var value = Encoding.UTF8.GetString(body);
+                    lock (this)
                     {
-                        var body = ea.Body;
-                        var value = Encoding.UTF8.GetString(body);
-                        lock (this)
+                        var result = callBackEvent?.Invoke(value);
+                        if (result != null && result.Value)
                         {
-                            var result = callBackEvent?.Invoke(value);
-                            if (result != null && result.Value)
+                            if (localConsumer.Model.IsOpen)
+                                localConsumer.Model.BasicAck(ea.DeliveryTag, false);
+                            else
+                            {
+                                var message = "queue:{queue} > BasicAck，Channel is not opened";
+                                EnterLogEvent(LogLevel.Error, message);
+                            }
+                        }
+                        else
+                        {
+                            if (_isNeedNack)
                             {
                                 if (localConsumer.Model.IsOpen)
-                                    localConsumer.Model.BasicAck(ea.DeliveryTag, false);
+                                    localConsumer.Model.BasicNack(ea.DeliveryTag, false, true);
                                 else
                                 {
-                                    var message = "queue:{queue} > BasicAck，Channel is not opened";
+                                    var message = "queue:{queue} > BasicNack，Channel is not opened";
                                     EnterLogEvent(LogLevel.Error, message);
                                 }
                             }
-                            else
-                            {
-                                if (_isNeedNack)
-                                {
-                                    if (localConsumer.Model.IsOpen)
-                                        localConsumer.Model.BasicNack(ea.DeliveryTag, false, true);
-                                    else
-                                    {
-                                        var message = "queue:{queue} > BasicNack，Channel is not opened";
-                                        EnterLogEvent(LogLevel.Error, message);
-                                    }
-                                }
-                            }
                         }
-                    });
+                    }
                 };
                 if (Channel != null)
                 {
