@@ -28,10 +28,8 @@ namespace RabbitMQ.Client.Wrap.Impl
         /// 订阅事件
         /// </summary>
         /// <param name="callBackEvent"></param>
-        /// <param name="prefetchSize"></param>
-        /// <param name="prefetchCount"></param>
         /// <returns></returns>
-        public string Subscribe(Func<string, bool> callBackEvent, uint prefetchSize = 10, ushort prefetchCount = 10)
+        public string Subscribe(Func<string, bool> callBackEvent)
         {
             try
             {
@@ -41,7 +39,7 @@ namespace RabbitMQ.Client.Wrap.Impl
                     EnterLogEvent(LogLevel.Error, message);
                     throw new Exception(message);
                 }
-                Channel.BasicQos(prefetchSize, prefetchCount, false);
+                //Channel.BasicQos(0, 1, false);
                 var consumer = new EventingBasicConsumer(Channel);
                 //接收事件
                 consumer.Received += (sender, ea) =>
@@ -93,6 +91,11 @@ namespace RabbitMQ.Client.Wrap.Impl
                 EnterLogEvent(LogLevel.Error, msg, exp);
                 throw;
             }
+        }
+
+        public void BasicQos(uint prefetchSize = 0, ushort prefetchCount = 10, bool global = false)
+        {
+            Channel.BasicQos(prefetchSize, prefetchCount, global);
         }
 
         public void Dispose()
