@@ -168,7 +168,7 @@
             
             </summary>
         </member>
-        <member name="M:RabbitMQ.Client.Wrap.Interface.ISubscriber.Subscribe(System.Func{System.String,System.Boolean})">
+        <member name="M:RabbitMQ.Client.Wrap.Interface.ISubscriber.Subscribe(System.Func{System.String,System.Boolean},System.UInt32,System.UInt16)">
             <summary>
             
             </summary>
@@ -250,11 +250,13 @@
             <param name="noAck">是否无需等待回答就默认消费掉消息</param>
             <param name="isNeedNack">消息是否需要重新丢入队列</param>
         </member>
-        <member name="M:RabbitMQ.Client.Wrap.Impl.Subscriber.Subscribe(System.Func{System.String,System.Boolean})">
+        <member name="M:RabbitMQ.Client.Wrap.Impl.Subscriber.Subscribe(System.Func{System.String,System.Boolean},System.UInt32,System.UInt16)">
             <summary>
             订阅事件
             </summary>
             <param name="callBackEvent"></param>
+            <param name="prefetchSize"></param>
+            <param name="prefetchCount"></param>
             <returns></returns>
         </member>
         <member name="T:RabbitMQ.Client.Wrap.Result">

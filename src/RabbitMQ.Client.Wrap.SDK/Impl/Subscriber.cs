@@ -17,18 +17,21 @@ namespace RabbitMQ.Client.Wrap.Impl
         /// <param name="queueName"></param>
         /// <param name="noAck">是否无需等待回答就默认消费掉消息</param>
         /// <param name="isNeedNack">消息是否需要重新丢入队列</param>
-        public Subscriber(Authorization authorization,string queueName, bool noAck = false, bool isNeedNack = true) : base(authorization, queueName)
+        public Subscriber(Authorization authorization, string queueName, bool noAck = false, bool isNeedNack = true) : base(authorization, queueName)
         {
             _isNeedNack = isNeedNack;
             _noAck = noAck;
+
         }
 
         /// <summary>
         /// 订阅事件
         /// </summary>
         /// <param name="callBackEvent"></param>
+        /// <param name="prefetchSize"></param>
+        /// <param name="prefetchCount"></param>
         /// <returns></returns>
-        public string Subscribe(Func<string, bool> callBackEvent)
+        public string Subscribe(Func<string, bool> callBackEvent, uint prefetchSize = 10, ushort prefetchCount = 10)
         {
             try
             {
@@ -38,6 +41,7 @@ namespace RabbitMQ.Client.Wrap.Impl
                     EnterLogEvent(LogLevel.Error, message);
                     throw new Exception(message);
                 }
+                Channel.BasicQos(prefetchSize, prefetchCount, false);
                 var consumer = new EventingBasicConsumer(Channel);
                 //接收事件
                 consumer.Received += (sender, ea) =>

@@ -11,6 +11,6 @@ namespace RabbitMQ.Client.Wrap.Interface
         /// 
         /// </summary>
         /// <returns></returns>
-        string Subscribe(Func<string, bool> callBackEvent);
+        string Subscribe(Func<string, bool> callBackEvent, uint prefetchSize = 10, ushort prefetchCount = 10);
     }
 }
