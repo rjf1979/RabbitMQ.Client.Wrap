@@ -67,7 +67,7 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
             Connection.Dispose();
         }
 
-        public Publisher(RabbitMqConfigOption option) : base(option)
+        public Publisher(RabbitMqConfigOption option) : base(string.Empty, option)
         {
         }
     }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 namespace RabbitMQ.Client.Standard.Wrap.Interface
 {
@@ -12,7 +11,7 @@ namespace RabbitMQ.Client.Standard.Wrap.Interface
         /// 
         /// </summary>
         /// <returns></returns>
-        string Subscribe<TObject>(string queueName, Func<TObject, bool> callBackEvent);
+        string Subscribe<TObject>(Func<TObject, bool> callBackEvent,string subscribeQueueName="");
 
         /// <summary>
         /// 设置消费预取设置

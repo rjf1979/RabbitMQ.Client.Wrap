@@ -14,19 +14,13 @@ namespace RabbitMQ.Client.Standard.Wrap
         {
             _option = option;
         }
-        private IPublisher _publisher;
+
         /// <summary>
-        /// 生产者
+        /// 创建生产者
         /// </summary>
-        public IPublisher Publisher
+        public IPublisher CreatePublisher()
         {
-            get
-            {
-                lock (this)
-                {
-                    return _publisher ?? (_publisher = new Publisher(_option));
-                }
-            }
+            return new Publisher(_option);
         }
         /// <summary>
         /// 创建消费者
