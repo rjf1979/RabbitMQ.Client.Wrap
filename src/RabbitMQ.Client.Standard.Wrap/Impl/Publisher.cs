@@ -7,22 +7,11 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
 {
     internal class Publisher : Queue, IPublisher
     {
-        public Task PublishAsync(string topic, string message)
+        public Task PublishAsync(string message)
         {
-            return PublishAsync(string.Empty, topic, message);
-        }
-
-        public Task PublishAsync<TObject>(string topic, TObject tObj)
-        {
-            var message = Option.Serializer.Serialize(tObj);
-            return PublishAsync(topic, message);
-        }
-
-        public Task PublishAsync(string exchange, string topic, string message)
-        {
-            if (string.IsNullOrWhiteSpace(topic))
+            if (string.IsNullOrWhiteSpace(Option.Topic))
             {
-                throw new ArgumentNullException(nameof(topic));
+                throw new ArgumentNullException(nameof(Option.Topic));
             }
             if (string.IsNullOrWhiteSpace(message))
             {
@@ -35,7 +24,7 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
                 {
                     if (Channel.IsOpen)
                     {
-                        Channel.BasicPublish(exchange, topic, BasicProperties, body);
+                        Channel.BasicPublish(Option.Exchange, Option.Topic, BasicProperties, body);
                     }
                     else
                     {
@@ -45,7 +34,7 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
                 }
                 catch (Exception exception)
                 {
-                    var msg = $"exchange：{exchange}，routingKey：{topic} > BasicPublish Failed,Time:{DateTime.Now}";
+                    var msg = $"exchange：{Option.Exchange}，routingKey：{Option.Topic} > BasicPublish Failed,Time:{DateTime.Now}";
                     EnterLogEvent(LogLevel.Error, msg, exception, message);
                 }
             }
@@ -53,10 +42,10 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
             return Task.CompletedTask;
         }
 
-        public Task PublishAsync<TObject>(string exchange, string topic, TObject tObj)
+        public Task PublishAsync<TObject>(TObject tObj)
         {
             var message = Option.Serializer.Serialize(tObj);
-            return PublishAsync(exchange, topic, message);
+            return PublishAsync(message);
         }
 
         public void Dispose()
@@ -67,7 +56,7 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
             Connection.Dispose();
         }
 
-        public Publisher(RabbitMqConfigOption option) : base(string.Empty, option)
+        public Publisher(RabbitMqConfigOption option) : base(option)
         {
         }
     }

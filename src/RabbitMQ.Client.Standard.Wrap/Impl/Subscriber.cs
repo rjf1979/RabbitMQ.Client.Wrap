@@ -11,12 +11,12 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
         /// 订阅事件
         /// </summary>
         /// <param name="callBackEvent"></param>
-        /// <param name="subscribeQueueName"></param>
+        /// <param name="topic"></param>
         /// <returns></returns>
-        public string Subscribe<TObject>(Func<TObject, bool> callBackEvent,string subscribeQueueName="")
+        public string Subscribe<TObject>(Func<TObject, bool> callBackEvent,string topic="")
         {
-            var queueName = subscribeQueueName;
-            if (string.IsNullOrEmpty(queueName)) queueName = QueueName;
+            var queueName = topic;
+            if (string.IsNullOrEmpty(queueName)) queueName = Option.Topic;
             try
             {
                 if (Channel.IsClosed)
@@ -86,7 +86,7 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
             Connection?.Dispose();
         }
 
-        public Subscriber(string subscribeQueueName, RabbitMqConfigOption option) : base(subscribeQueueName, option)
+        public Subscriber(RabbitMqConfigOption option) : base(option)
         {
         }
     }

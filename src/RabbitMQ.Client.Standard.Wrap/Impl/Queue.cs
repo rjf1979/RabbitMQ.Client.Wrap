@@ -30,11 +30,9 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="queueName"></param>
         /// <param name="option">rabbitMQ的配置信息</param>
-        protected Queue(string queueName,RabbitMqConfigOption option)
+        protected Queue(RabbitMqConfigOption option)
         {
-            QueueName = queueName;
             Option = option;
             ConnectionFactory = new ConnectionFactory
             {
@@ -172,8 +170,6 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
         {
             if (ExceptionHandler == null) ExceptionHandler = exceptionHandler;
         }
-
-        public string QueueName { get; set; }
 
         public RabbitMqConfigOption Option { get; }
     }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using RabbitMQ.Client.Standard.Wrap.Interface;
 
 namespace RabbitMQ.Client.Standard.Wrap
@@ -16,12 +13,14 @@ namespace RabbitMQ.Client.Standard.Wrap
         /// Durable (the queue will survive a broker restart)
         /// </summary>
         public bool IsQueueDurable { get; set; } = true;
+        public string Topic { get; set; }
+        public string Exchange { get; set; }
         /// <summary>
         /// Durable (the exchange will survive a broker restart)
         /// </summary>
         public bool IsExchangeDurable { get; set; } = true;
 
-        public ILogger Logger { get; set; }
+        public ILogger Logger { get; set; } = new LoggerFactory().CreateLogger("RabbitMq");
         public ISerializer Serializer { get; set; } = new Serializer();
     }
 }
