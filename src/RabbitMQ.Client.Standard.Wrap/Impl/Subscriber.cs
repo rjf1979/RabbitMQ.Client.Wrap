@@ -13,7 +13,7 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
         /// <param name="callBackEvent"></param>
         /// <param name="topic"></param>
         /// <returns></returns>
-        public string Subscribe<TObject>(Func<TObject, bool> callBackEvent,string topic="")
+        public string Subscribe<TObject>(Action<TObject> callBackEvent, string topic = "")
         {
             var queueName = topic;
             if (string.IsNullOrEmpty(queueName)) queueName = Option.Topic;
@@ -38,17 +38,8 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
                         {
                             if (string.IsNullOrEmpty(value)) return;
                             var tobj = Option.Serializer.Deserialize<TObject>(value);
-                            var result = callBackEvent.Invoke(tobj);
-                            if (result)
-                            {
-                                if (localConsumer.Model.IsOpen)
-                                    localConsumer.Model.BasicAck(ea.DeliveryTag, false);
-                                else
-                                {
-                                    var message = "queue:{queue} > BasicAck，Channel is not opened";
-                                    EnterLogEvent(LogLevel.Error, message);
-                                }
-                            }
+                            callBackEvent.Invoke(tobj);
+                            localConsumer.Model.BasicAck(ea.DeliveryTag, false);
                         }
                         catch (Exception exception)
                         {

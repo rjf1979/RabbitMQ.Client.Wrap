@@ -11,7 +11,7 @@ namespace RabbitMQ.Client.Standard.Wrap.Interface
         /// 
         /// </summary>
         /// <returns></returns>
-        string Subscribe<TObject>(Func<TObject, bool> callBackEvent,string subscribeQueueName="");
+        string Subscribe<TObject>(Action<TObject> callBackEvent,string subscribeQueueName="");
 
         /// <summary>
         /// 设置消费预取设置
