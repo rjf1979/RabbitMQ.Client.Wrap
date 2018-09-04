@@ -14,7 +14,7 @@ namespace RabbitMQ.Client.Standard.Wrap
         /// </summary>
         public bool IsQueueDurable { get; set; } = true;
         public string Topic { get; set; }
-        public string Exchange { get; set; }
+        public string Exchange { get; set; } = string.Empty;
         /// <summary>
         /// Durable (the exchange will survive a broker restart)
         /// </summary>
