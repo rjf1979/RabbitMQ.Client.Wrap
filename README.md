@@ -25,3 +25,40 @@ Support automatic recovery reconnection and need reference RabbitMQ.Client SDK
             Console.WriteLine($"Subscribe Tag > {tag} ， Time > {DateTime.Now}");
             
             
+.NET CORE demo
+
+    public interface IStatusFlowMessageBus
+    {
+        Task PublishAsync(StatusFlow statusFlow);
+        void Subscribe(Action<StatusFlow> func);
+    }
+    
+    public class StatusFlowMessageBus: IStatusFlowMessageBus
+    {
+        private readonly IPublisher _publisher;
+        private readonly ISubscriber _subscriber;
+
+        public StatusFlowMessageBus(RabbitMqConfigOption option)
+        {
+            _publisher = RabbitMqFactory.CreatePublisher(option);
+            _subscriber = RabbitMqFactory.CreateSubscriber(option);
+        }
+
+        public async Task PublishAsync(StatusFlow statusFlow)
+        {
+            await _publisher.PublishAsync(statusFlow);
+        }
+
+        public void Subscribe(Action<StatusFlow> func)
+        {
+            _subscriber.Subscribe(func);
+        }
+    }
+    
+    //IOC 在使用上，各自可以根据实际情况灵活运用              
+    services.AddSingleton<IStatusFlowMessageBus>(a => new StatusFlowMessageBus(new RabbitMqConfigOption
+    {
+        ConnectionString = Configuration.GetConnectionString("StatusFlowMQ"),
+        Logger = a.GetService<ILoggerFactory>().CreateLogger("StatusFlowMQ"),
+        Topic = "WaitProcess"
+    }));
