@@ -20,6 +20,7 @@ namespace RabbitMQ.Client.Standard.Wrap
         /// </summary>
         public bool IsExchangeDurable { get; set; } = true;
 
+        public ExchangeType ExchangeType { get; set; } = ExchangeType.Topic;
         public ILogger Logger { get; set; } = new LoggerFactory().CreateLogger("RabbitMq");
         public ISerializer Serializer { get; set; } = new Serializer();
     }

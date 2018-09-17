@@ -14,7 +14,7 @@
         /// </summary>
         Fanout,
         /// <summary>
-        /// 
+        /// 一般模式
         /// </summary>
         Topic
     }
