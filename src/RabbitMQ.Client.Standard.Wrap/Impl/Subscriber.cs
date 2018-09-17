@@ -25,6 +25,17 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
                     EnterLogEvent(LogLevel.Error, message);
                     throw new Exception(message);
                 }
+                if (Option.ExchangeType == ExchangeType.Fanout)
+                {
+                    QueueDeclareOk queueOk = Channel.QueueDeclare();
+                    queueName = queueOk.QueueName;
+                    Channel.QueueBind(queueName,Option.Exchange,string.Empty);
+                }
+                else if (Option.ExchangeType == ExchangeType.Direct)
+                {
+                    Channel.QueueBind(queueName, Option.Exchange, Option.RouteKey);
+                }
+
                 var consumer = new EventingBasicConsumer(Channel);
                 //接收事件
                 consumer.Received += (sender, ea) =>

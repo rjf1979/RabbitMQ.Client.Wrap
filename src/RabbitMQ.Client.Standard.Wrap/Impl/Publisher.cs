@@ -24,7 +24,18 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
                 {
                     if (Channel.IsOpen)
                     {
-                        Channel.BasicPublish(Option.Exchange, Option.Topic, BasicProperties, body);
+                        if (Option.ExchangeType == ExchangeType.Fanout)
+                        {
+                            Channel.BasicPublish(Option.Exchange, string.Empty, BasicProperties, body);
+                        }
+                        else if (Option.ExchangeType == ExchangeType.Direct)
+                        {
+                            Channel.BasicPublish(Option.Exchange, Option.RouteKey, BasicProperties, body);
+                        }
+                        else
+                        {
+                            Channel.BasicPublish(string.Empty, Option.Topic, BasicProperties, body);
+                        }
                     }
                     else
                     {
