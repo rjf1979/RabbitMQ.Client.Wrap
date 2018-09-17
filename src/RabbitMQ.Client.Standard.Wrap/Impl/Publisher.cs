@@ -9,10 +9,6 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
     {
         public Task PublishAsync(string message)
         {
-            if (string.IsNullOrWhiteSpace(Option.Topic))
-            {
-                throw new ArgumentNullException(nameof(Option.Topic));
-            }
             if (string.IsNullOrWhiteSpace(message))
             {
                 throw new ArgumentNullException(nameof(message));
