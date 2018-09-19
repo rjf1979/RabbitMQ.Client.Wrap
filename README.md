@@ -1,3 +1,5 @@
+QQ群：55087803
+
 # RabbitMQ.Client.Wrap Demo
 
 Support automatic recovery reconnection and need reference RabbitMQ.Client SDK
