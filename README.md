@@ -1,4 +1,4 @@
-QQ群：55087803
+# QQ群：55087803
 
 # RabbitMQ.Client.Wrap Demo
 
