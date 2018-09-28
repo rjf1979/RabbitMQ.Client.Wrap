@@ -65,6 +65,15 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
 
         public Publisher(RabbitMqConfigOption option) : base(option)
         {
+            //如果Exchange不为空，需设定模式
+            if (option.ExchangeType == ExchangeType.Fanout || option.ExchangeType == ExchangeType.Direct)
+            {
+                ExchangeDeclare(option.Exchange, option.ExchangeType);
+            }
+            else
+            {
+                QueueDeclare(option.Topic);
+            }
         }
     }
 }

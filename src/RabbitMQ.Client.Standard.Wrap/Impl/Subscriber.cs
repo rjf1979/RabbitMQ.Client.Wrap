@@ -29,7 +29,7 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
                 {
                     QueueDeclareOk queueOk = Channel.QueueDeclare();
                     queueName = queueOk.QueueName;
-                    Channel.QueueBind(queueName,Option.Exchange,string.Empty);
+                    Channel.QueueBind(queueName, Option.Exchange, string.Empty);
                 }
                 else if (Option.ExchangeType == ExchangeType.Direct)
                 {
@@ -90,6 +90,17 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
 
         public Subscriber(RabbitMqConfigOption option) : base(option)
         {
+            //如果Exchange不为空，需设定模式
+            if (option.ExchangeType == ExchangeType.Fanout || option.ExchangeType == ExchangeType.Direct)
+            {
+                ExchangeDeclare(option.Exchange, option.ExchangeType);
+                QueueDeclare(option.Topic);
+                QueueBind(option.Exchange, option.Topic, option.RouteKey);
+            }
+            else
+            {
+                QueueDeclare(option.Topic);
+            }
         }
     }
 }

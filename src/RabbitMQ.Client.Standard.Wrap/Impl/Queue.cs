@@ -45,11 +45,6 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
                 BasicProperties = Channel.CreateBasicProperties();
                 BasicProperties.DeliveryMode = 2;
             }
-            //如果Exchange不为空，需设定模式
-            if (option.ExchangeType == ExchangeType.Fanout || option.ExchangeType == ExchangeType.Direct)
-            {
-                ExchangeDeclare(option.Exchange, option.ExchangeType);
-            }
         }
 
         protected Action<string, Exception> ExceptionHandler;
