@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Text;
-using System.Threading.Tasks;
 using RabbitMQ.Client.Standard.Wrap.Interface;
 
 namespace RabbitMQ.Client.Standard.Wrap.Impl
 {
     internal class Publisher : Queue, IPublisher
     {
-        public Task PublishAsync(string message)
+        public void Publish(string message)
         {
             if (string.IsNullOrWhiteSpace(message))
             {
@@ -45,14 +44,12 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
                     EnterLogEvent(LogLevel.Error, msg, exception, message);
                 }
             }
-
-            return Task.CompletedTask;
         }
 
-        public Task PublishAsync<TObject>(TObject tObj)
+        public void Publish<TObject>(TObject tObj)
         {
             var message = Option.Serializer.Serialize(tObj);
-            return PublishAsync(message);
+            Publish(message);
         }
 
         public void Dispose()

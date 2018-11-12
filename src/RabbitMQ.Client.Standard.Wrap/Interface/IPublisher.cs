@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 namespace RabbitMQ.Client.Standard.Wrap.Interface
 {
@@ -12,7 +11,8 @@ namespace RabbitMQ.Client.Standard.Wrap.Interface
         /// 
         /// </summary>
         /// <param name="message"></param>
-        Task PublishAsync(string message);
-        Task PublishAsync<TObject>(TObject tObj);
+        void Publish(string message);
+
+        void Publish<TObject>(TObject tObj);
     }
 }
