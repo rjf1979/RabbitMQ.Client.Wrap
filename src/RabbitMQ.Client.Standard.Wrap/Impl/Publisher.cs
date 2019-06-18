@@ -6,13 +6,17 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
 {
     internal class Publisher : Queue, IPublisher
     {
+        private static readonly object _locker = new object();
+
         public void Publish(string message)
         {
             if (string.IsNullOrWhiteSpace(message))
             {
                 throw new ArgumentNullException(nameof(message));
             }
-            lock (this)
+
+            EnterLogEvent(LogLevel.Warn, "当前Channel：" + Channel.GetHashCode());
+            lock (_locker)
             {
                 var body = Encoding.UTF8.GetBytes(message);
                 try
@@ -52,13 +56,13 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
             Publish(message);
         }
 
-        public void Dispose()
-        {
-            Channel.Abort();
-            Connection.Abort();
-            Channel.Dispose();
-            Connection.Dispose();
-        }
+        //public void Dispose()
+        //{
+        //    Channel.Abort();
+        //    Connection.Abort();
+        //    Channel.Dispose();
+        //    Connection.Dispose();
+        //}
 
         public Publisher(RabbitMqConfigOption option) : base(option)
         {

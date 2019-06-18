@@ -82,11 +82,11 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
             Channel.BasicQos(prefetchSize, prefetchCount, global);
         }
 
-        public void Dispose()
-        {
-            Channel?.Dispose();
-            Connection?.Dispose();
-        }
+        //public void Dispose()
+        //{
+        //    Channel?.Dispose();
+        //    Connection?.Dispose();
+        //}
 
         public Subscriber(RabbitMqConfigOption option) : base(option)
         {

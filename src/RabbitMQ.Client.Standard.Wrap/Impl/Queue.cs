@@ -13,19 +13,40 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
         /// <summary>
         /// 
         /// </summary>
-        protected IConnectionFactory ConnectionFactory;
+        protected IConnection Connection
+        {
+            get
+            {
+                lock (this)
+                {
+                    if (!_connections.ContainsKey(Option.ConnectionString))
+                        throw new ArgumentNullException("no find connection, Connection:" + Option.ConnectionString);
+                    return _connections[Option.ConnectionString];
+                }
+            }
+        }
+
         /// <summary>
         /// 
         /// </summary>
-        protected IConnection Connection;
-        /// <summary>
-        /// 
-        /// </summary>
-        protected IModel Channel;
+        protected IModel Channel
+        {
+            get
+            {
+                lock (this)
+                {
+                    if (!_models.ContainsKey(Option.ConnectionString)) throw new ArgumentNullException("no find channel, Connection:" + Option.ConnectionString);
+                    return _models[Option.ConnectionString];
+                }
+            }
+        }
         /// <summary>
         /// 
         /// </summary>
         protected IBasicProperties BasicProperties;
+
+        private static readonly IDictionary<string, IModel> _models = new Dictionary<string, IModel>();
+        private static readonly IDictionary<string, IConnection> _connections = new Dictionary<string, IConnection>();
 
         /// <summary>
         /// 
@@ -34,12 +55,12 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
         protected Queue(RabbitMqConfigOption option)
         {
             Option = option;
-            ConnectionFactory = new ConnectionFactory
+            var connectionFactory = new ConnectionFactory
             {
                 Uri = new Uri(option.ConnectionString),
                 AutomaticRecoveryEnabled = true
             };
-            Init();
+            Init(connectionFactory);
             if (option.IsQueueDurable)
             {
                 BasicProperties = Channel.CreateBasicProperties();
@@ -72,14 +93,28 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
             }
         }
 
-        protected void Init()
+        protected void Init(IConnectionFactory connectionFactory)
         {
             try
             {
-                Connection = ConnectionFactory.CreateConnection();
-                Channel = Connection.CreateModel();
-                Connection.CallbackException += Connection_CallbackException;
-                Channel.CallbackException += Channel_CallbackException;
+                lock (this)
+                {
+                    if (!_connections.ContainsKey(Option.ConnectionString))
+                    {
+                        var connection = connectionFactory.CreateConnection();
+                        connection.CallbackException += Connection_CallbackException;
+                        _connections.Add(Option.ConnectionString, connection);
+                    }
+
+                    if (!_models.ContainsKey(Option.ConnectionString))
+                    {
+                        var channel = Connection.CreateModel();
+                        channel.CallbackException += Channel_CallbackException;
+                        _models.Add(Option.ConnectionString, channel);
+                    }
+                }
+
+
             }
             catch (Exception exception)
             {

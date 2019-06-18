@@ -1,5 +1,4 @@
-﻿using System;
-using RabbitMQ.Client.Standard.Wrap.Impl;
+﻿using RabbitMQ.Client.Standard.Wrap.Impl;
 using RabbitMQ.Client.Standard.Wrap.Interface;
 
 namespace RabbitMQ.Client.Standard.Wrap

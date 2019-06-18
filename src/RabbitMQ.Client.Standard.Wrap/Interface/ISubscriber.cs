@@ -5,7 +5,7 @@ namespace RabbitMQ.Client.Standard.Wrap.Interface
     /// <summary>
     /// 
     /// </summary>
-    public interface ISubscriber: IQueue, IDisposable
+    public interface ISubscriber: IQueue
     {
         /// <summary>
         /// 
