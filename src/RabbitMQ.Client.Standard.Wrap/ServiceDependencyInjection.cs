@@ -11,11 +11,9 @@ namespace RabbitMQ.Client.Standard.Wrap
         /// 
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="name"></param>
-        /// <param name="config"></param>
-        public static void AddRabbitMqFactory(this IServiceCollection services, string name, IOptions<RabbitMQConfig> config)
+        public static void AddRabbitMqFactory(this IServiceCollection services)
         {
-            services.AddSingleton<IFactory>(opt => new Factory(opt.GetService<ILogger>(), config.Value));
+            services.AddSingleton<IFactory, Factory>();
         }
     }
 }

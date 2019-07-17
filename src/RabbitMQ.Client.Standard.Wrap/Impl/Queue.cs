@@ -15,13 +15,13 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="option">rabbitMQ的配置信息</param>
-        protected Queue(ILogger logger,RabbitMQConfig.Option option)
+        protected Queue(ILogger logger,RabbitMQConfigOption option)
         {
             Logger = logger;
             Option = option;
             var connectionFactory = new ConnectionFactory
             {
-                Uri = new Uri(option.ConnectionString),
+                Uri = new Uri(Option.Connection),
                 AutomaticRecoveryEnabled = true
             };
             Init(connectionFactory);
@@ -34,7 +34,7 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
 
         protected ILogger Logger { get; set; }
 
-        public RabbitMQConfig.Option Option { get; }
+        public RabbitMQConfigOption Option { get; }
 
         /// <summary>
         /// 

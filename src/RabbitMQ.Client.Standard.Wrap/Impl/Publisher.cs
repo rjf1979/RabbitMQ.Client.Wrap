@@ -7,9 +7,8 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
 {
     public class Publisher : Queue, IPublisher
     {
-        //private static readonly object _locker = new object();
-
-        public Publisher(ILogger logger,RabbitMQConfig.Option option) : base(logger, option)
+        private bool _isQueueDeclare = false;
+        public Publisher(ILogger logger,RabbitMQConfigOption option) : base(logger, option)
         {
             
         }
@@ -21,7 +20,7 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
                 throw new ArgumentNullException(nameof(message));
             }
 
-            EnterLogEvent("当前Channel：" + Channel.GetHashCode());
+            //EnterLogEvent("当前Channel：" + Channel.GetHashCode());
             //lock (_locker)
             {
                 var body = Encoding.UTF8.GetBytes(message);
@@ -29,6 +28,12 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
                 {
                     if (Channel.IsOpen)
                     {
+                        if (!_isQueueDeclare)
+                        {
+                            QueueDeclare(queue);
+                            _isQueueDeclare = true;
+                        }
+
                         //if (Option.ExchangeType == ExchangeType.Fanout)
                         //{
                         //    Channel.BasicPublish(Option.Exchange, string.Empty, BasicProperties, body);

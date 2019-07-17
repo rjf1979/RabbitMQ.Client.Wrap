@@ -33,6 +33,6 @@ namespace RabbitMQ.Client.Standard.Wrap.Interface
         /// </summary>
         /// <param name="exceptionAction"></param>
         void RegisterExceptionHandler(Action<string, Exception> exceptionAction);
-        RabbitMQConfig.Option Option { get; }
+        RabbitMQConfigOption Option { get; }
     }
 }

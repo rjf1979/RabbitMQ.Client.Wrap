@@ -8,7 +8,7 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
 {
     public class Subscriber : Queue, ISubscriber
     {
-        public Subscriber(ILogger logger, RabbitMQConfig.Option option) : base(logger, option)
+        public Subscriber(ILogger logger, RabbitMQConfigOption option) : base(logger, option)
         {
             //如果Exchange不为空，需设定模式
             //if (option.ExchangeType == ExchangeType.Fanout || option.ExchangeType == ExchangeType.Direct)
