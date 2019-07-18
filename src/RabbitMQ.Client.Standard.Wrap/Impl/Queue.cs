@@ -8,134 +8,94 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
     /// <inheritdoc />
     /// <summary>
     /// </summary>
-    internal abstract class Queue : IQueue
+    public abstract class Queue : IQueue
     {
         /// <summary>
         /// 
         /// </summary>
-        protected IConnection Connection
+        /// <param name="logger"></param>
+        /// <param name="option">rabbitMQ的配置信息</param>
+        protected Queue(ILogger logger,RabbitMQConfigOption option)
         {
-            get
+            Logger = logger;
+            Option = option;
+            var connectionFactory = new ConnectionFactory
             {
-                lock (this)
-                {
-                    if (!_connections.ContainsKey(Option.ConnectionString))
-                        throw new ArgumentNullException("no find connection, Connection:" + Option.ConnectionString);
-                    return _connections[Option.ConnectionString];
-                }
-            }
+                Uri = new Uri(Option.Connection),
+                AutomaticRecoveryEnabled = true
+            };
+            Init(connectionFactory);
+            //if (option.IsQueueDurable)
+            //{
+                BasicProperties = Channel.CreateBasicProperties();
+                BasicProperties.DeliveryMode = 2;
+            //}
         }
+
+        protected ILogger Logger { get; set; }
+
+        public RabbitMQConfigOption Option { get; }
 
         /// <summary>
         /// 
         /// </summary>
-        protected IModel Channel
-        {
-            get
-            {
-                lock (this)
-                {
-                    if (!_models.ContainsKey(Option.ConnectionString)) throw new ArgumentNullException("no find channel, Connection:" + Option.ConnectionString);
-                    return _models[Option.ConnectionString];
-                }
-            }
-        }
+        protected IConnection Connection { get; private set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected IModel Channel { get; private set; }
         /// <summary>
         /// 
         /// </summary>
         protected IBasicProperties BasicProperties;
 
-        private static readonly IDictionary<string, IModel> _models = new Dictionary<string, IModel>();
-        private static readonly IDictionary<string, IConnection> _connections = new Dictionary<string, IConnection>();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="option">rabbitMQ的配置信息</param>
-        protected Queue(RabbitMqConfigOption option)
-        {
-            Option = option;
-            var connectionFactory = new ConnectionFactory
-            {
-                Uri = new Uri(option.ConnectionString),
-                AutomaticRecoveryEnabled = true
-            };
-            Init(connectionFactory);
-            if (option.IsQueueDurable)
-            {
-                BasicProperties = Channel.CreateBasicProperties();
-                BasicProperties.DeliveryMode = 2;
-            }
-        }
 
         protected Action<string, Exception> ExceptionHandler;
 
-        protected void EnterLogEvent(LogLevel logLevel, string message, Exception exception = null, params object[] args)
+        protected void EnterLogEvent(string message, Exception exception = null)
         {
-            if (exception != null) ExceptionHandler?.Invoke(message, exception);
-#if DEBUG
-            Option.Logger.LogDebug(exception, message, args);
-#endif
-#if TRACE
-            Option.Logger.LogTrace(message, exception, args);
-#endif
-            switch (logLevel)
-            {
-                case LogLevel.Info:
-                    Option.Logger.LogInformation(exception, message, args);
-                    break;
-                case LogLevel.Warn:
-                    Option.Logger.LogWarning(exception, message, args);
-                    break;
-                case LogLevel.Error:
-                    Option.Logger.LogError(exception, message, args);
-                    break;
-            }
+            if (exception != null) Logger.LogError(exception, message);
+            else Logger.LogInformation(message);
         }
 
         protected void Init(IConnectionFactory connectionFactory)
         {
             try
             {
-                lock (this)
-                {
-                    if (!_connections.ContainsKey(Option.ConnectionString))
-                    {
-                        var connection = connectionFactory.CreateConnection();
-                        connection.CallbackException += Connection_CallbackException;
-                        _connections.Add(Option.ConnectionString, connection);
-                    }
-
-                    if (!_models.ContainsKey(Option.ConnectionString))
-                    {
-                        var channel = Connection.CreateModel();
-                        channel.CallbackException += Channel_CallbackException;
-                        _models.Add(Option.ConnectionString, channel);
-                    }
-                }
-
-
+                Connection = connectionFactory.CreateConnection();
+                Connection.CallbackException += Connection_CallbackException;
             }
             catch (Exception exception)
             {
-                var msg = "RabbitMQ Service Connection is exception";
-                EnterLogEvent(LogLevel.Error, msg, exception);
+                var msg = "RabbitMQ Service CreateConnection is exception";
+                EnterLogEvent(msg, exception);
                 throw;
             }
-
+            try
+            {
+                Channel = Connection.CreateModel();
+                Channel.CallbackException += Channel_CallbackException;
+            }
+            catch (Exception exception)
+            {
+                var msg = "RabbitMQ Service CreateModel is exception";
+                EnterLogEvent(msg, exception);
+                throw;
+            }
         }
 
         #region -- Event
         private void Channel_CallbackException(object sender, Events.CallbackExceptionEventArgs e)
         {
             var msg = $"Channel is CallbackException,Time:{DateTime.Now}";
-            EnterLogEvent(LogLevel.Error, msg, e.Exception);
+            EnterLogEvent(msg, e.Exception);
         }
 
         private void Connection_CallbackException(object sender, Events.CallbackExceptionEventArgs e)
         {
             var msg = $"Connection is CallbackException,Time:{DateTime.Now}";
-            EnterLogEvent(LogLevel.Error, msg, e.Exception);
+            EnterLogEvent(msg, e.Exception);
         }
         #endregion
 
@@ -148,13 +108,13 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
         {
             try
             {
-                var result = Channel.QueueDeclare(queue, Option.IsQueueDurable, false, false, arguments);
+                var result = Channel.QueueDeclare(queue, true, false, false, arguments);
                 return !string.IsNullOrEmpty(result.QueueName);
             }
             catch (Exception e)
             {
                 var msg = $"QueueDeclare {queue} is exception {DateTime.Now}";
-                EnterLogEvent(LogLevel.Error, msg, e);
+                EnterLogEvent(msg, e);
             }
             return false;
         }
@@ -174,7 +134,7 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
             catch (Exception e)
             {
                 var msg = $"QueueBind exchange:{exchange} > queue:{queue} is exception {DateTime.Now}";
-                EnterLogEvent(LogLevel.Error, msg, e);
+                EnterLogEvent(msg, e);
                 throw;
             }
 
@@ -190,12 +150,12 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
         {
             try
             {
-                Channel.ExchangeDeclare(exchange, exchangeType.ToString().ToLower(), Option.IsExchangeDurable, false, arguments);
+                Channel.ExchangeDeclare(exchange, exchangeType.ToString().ToLower(), true, false, arguments);
             }
             catch (Exception e)
             {
                 var msg = $"ExchangeDeclare exchange:{exchange} is exception {DateTime.Now}";
-                EnterLogEvent(LogLevel.Error, msg, e);
+                EnterLogEvent(msg, e);
                 throw;
             }
 
@@ -206,6 +166,6 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
             if (ExceptionHandler == null) ExceptionHandler = exceptionHandler;
         }
 
-        public RabbitMqConfigOption Option { get; }
+
     }
 }

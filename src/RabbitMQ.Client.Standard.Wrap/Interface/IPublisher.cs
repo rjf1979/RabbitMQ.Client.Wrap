@@ -10,9 +10,8 @@ namespace RabbitMQ.Client.Standard.Wrap.Interface
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="queue"></param>
         /// <param name="message"></param>
-        void Publish(string message);
-
-        void Publish<TObject>(TObject tObj);
+        void Publish(string queue,string message);
     }
 }
