@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using RabbitMQ.Client.Standard.Wrap.Interface;
+﻿using RabbitMQ.Client.Standard.Wrap.Interface;
 
 namespace RabbitMQ.Client.Standard.Wrap
 {
