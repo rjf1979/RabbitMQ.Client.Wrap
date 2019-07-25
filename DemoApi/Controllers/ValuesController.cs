@@ -12,10 +12,10 @@ namespace DemoApi.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        private readonly IFactory _factory;
+        private readonly IRabbitMQFactory _factory;
         private readonly IPublisher _publisher;
         private readonly ISubscriber _subscriber;
-        public ValuesController(IFactory factory)
+        public ValuesController(IRabbitMQFactory factory)
         {
             _factory = factory;
             _publisher = _factory.GetPublisher("StatusFlow");

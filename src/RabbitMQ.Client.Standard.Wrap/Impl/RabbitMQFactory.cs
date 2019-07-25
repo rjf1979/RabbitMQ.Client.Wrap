@@ -1,29 +1,28 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client.Standard.Wrap.Interface;
+using System;
+using System.Collections.Concurrent;
+using System.Linq;
 
 namespace RabbitMQ.Client.Standard.Wrap.Impl
 {
     /// <summary>
     /// 客户端
     /// </summary>
-    public class Factory: IFactory
+    public class RabbitMQFactory: IRabbitMQFactory
     {
         private readonly ConcurrentDictionary<string,IPublisher> _publishers = new ConcurrentDictionary<string, IPublisher>();
         private readonly RabbitMQConfig _config;
         private readonly ILogger _logger;
 
-        public Factory(ILogger logger,IOptions<RabbitMQConfig> options)
+        public RabbitMQFactory(ILogger logger,IOptions<RabbitMQConfig> options)
         {
             _logger = logger;
             _config = options.Value;
         }
 
-        public Factory(ILogger logger, RabbitMQConfig config)
+        public RabbitMQFactory(ILogger logger, RabbitMQConfig config)
         {
             _logger = logger;
             _config = config;

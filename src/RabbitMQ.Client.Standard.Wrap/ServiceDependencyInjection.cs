@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using RabbitMQ.Client.Standard.Wrap.Impl;
 
 namespace RabbitMQ.Client.Standard.Wrap
@@ -13,7 +11,7 @@ namespace RabbitMQ.Client.Standard.Wrap
         /// <param name="services"></param>
         public static void AddRabbitMqFactory(this IServiceCollection services)
         {
-            services.AddSingleton<IFactory, Factory>();
+            services.AddSingleton<IRabbitMQFactory, RabbitMQFactory>();
         }
     }
 }

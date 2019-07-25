@@ -2,7 +2,7 @@
 
 namespace RabbitMQ.Client.Standard.Wrap
 {
-    public interface IFactory
+    public interface IRabbitMQFactory
     {
         IPublisher GetPublisher(string name);
         ISubscriber GetSubscriber(string name);
