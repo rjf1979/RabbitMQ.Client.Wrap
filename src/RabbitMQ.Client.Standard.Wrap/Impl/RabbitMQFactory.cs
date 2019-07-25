@@ -16,15 +16,15 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
         private readonly RabbitMQConfig _config;
         private readonly ILogger _logger;
 
-        public RabbitMQFactory(ILogger logger,IOptions<RabbitMQConfig> options)
+        public RabbitMQFactory(ILoggerFactory loggerFactory,IOptions<RabbitMQConfig> options)
         {
-            _logger = logger;
+            _logger = loggerFactory.CreateLogger(typeof(RabbitMQFactory));
             _config = options.Value;
         }
 
-        public RabbitMQFactory(ILogger logger, RabbitMQConfig config)
+        public RabbitMQFactory(ILoggerFactory loggerFactory, RabbitMQConfig config)
         {
-            _logger = logger;
+            _logger = loggerFactory.CreateLogger(typeof(RabbitMQFactory));
             _config = config;
         }
 

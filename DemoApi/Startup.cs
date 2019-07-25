@@ -21,7 +21,6 @@ namespace DemoApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<ILoggerFactory>(new LoggerFactory());
-            services.AddSingleton(opt=>opt.GetService<ILoggerFactory>().CreateLogger(""));
             services.Configure<RabbitMQConfig>(Configuration.GetSection("RabbitMQConfig"));
             services.AddRabbitMqFactory();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
@@ -34,7 +33,6 @@ namespace DemoApi
             {
                 app.UseDeveloperExceptionPage();
             }
-
             app.UseMvc();
         }
     }

@@ -7,7 +7,7 @@ namespace RabbitMQ.Client.Standard.Wrap.Impl
 {
     public class Publisher : Queue, IPublisher
     {
-        private bool _isQueueDeclare = false;
+        private bool _isQueueDeclare;
         public Publisher(ILogger logger,RabbitMQConfigOption option) : base(logger, option)
         {
             
