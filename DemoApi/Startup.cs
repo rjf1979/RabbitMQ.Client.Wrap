@@ -21,8 +21,7 @@ namespace DemoApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSingleton<ILoggerFactory>(new LoggerFactory());
-            services.Configure<RabbitMQConfig>(Configuration.GetSection("RabbitMQConfig"));
-            services.AddRabbitMqFactory();
+            services.AddRabbitMqFactory(Configuration.GetSection("RabbitMQConfig"));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
